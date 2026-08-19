@@ -1,0 +1,64 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# Environments and editors
+.env
+.venv/
+env/
+venv/
+.idea/
+.vscode/
+*.swp
+*.swo
+.ipynb_checkpoints/
+
+# Local agent and assistant state
+.agents/
+.codex/
+.gemini/
+.command
+
+# Datasets: keep only the contract document
+/data/*
+!/data/README.md
+
+# Model weights: keep only preparation documents
+/pretrained_models/*
+!/pretrained_models/README.md
+/sam2/checkpoints/*
+!/sam2/checkpoints/README.md
+
+# Runtime artifacts
+/checkpoints/*
+!/checkpoints/README.md
+/outputs/
+/wandb/
+/logs/
+/log/
+/vis/
+/ray_results/
+/*_workdir/
+*.log
+output_*.txt
+
+# Binary model and dataset artifacts
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.arrow
+*.parquet
+*.whl
+*.npz
+
+# Temporary and archived variants
+*copy*
+*_temp.py
+*_old.py
+*~
