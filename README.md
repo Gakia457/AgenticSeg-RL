@@ -24,16 +24,9 @@ Segmentation failures in complex scenes are rarely all-or-nothing. A model may f
 
 AgenticSeg-RL turns segmentation into an **Act-Inspect-Correct** process:
 
-```mermaid
-flowchart LR
-    A[Image and instruction] --> B[VLM Act<br/>Predict box and prompt point]
-    B --> C[SAM<br/>Execute segmentation]
-    C --> D[VLM Inspect<br/>Assess mask quality]
-    D -->|Accept| E[Final mask]
-    D -->|Refine| F[VLM Correct<br/>Diagnose EXTRA or MISSING]
-    F --> G[Positive or negative correction point]
-    G --> C
-```
+<p align="center">
+  <img src="assets/diagrams/agent-loop.svg" width="1100" alt="AgenticSeg-RL Act-Inspect-Correct inference loop">
+</p>
 
 Each capability is trained with dedicated data and reward signals, then assigned a clear role in the loop:
 
@@ -119,19 +112,19 @@ The Act policy resolves attributes, relations, and exclusion conditions before p
 
 > **Prompt:** Identify the person on the ice who is not a player but is holding a microphone.
 
-<p align="center">
-  <img src="assets/examples-v2/task1-microphone.png" width="1100" alt="Grounded segmentation of the person holding a microphone on the ice">
-</p>
-<table width="100%"><tr><td width="33%" align="center"><sub><b>Original Image</b></sub></td><td width="34%" align="center"><sub><b>Ground Truth Mask</b></sub></td><td width="33%" align="center"><sub><b>Model Prediction</b></sub></td></tr></table>
+<table width="100%">
+  <tr><td colspan="3" align="center"><img src="assets/examples-v2/task1-microphone.png" width="100%" alt="Grounded segmentation of the person holding a microphone on the ice"></td></tr>
+  <tr><td width="33.33%" align="center"><sub><b>Original Image</b></sub></td><td width="33.34%" align="center"><sub><b>Ground Truth Mask</b></sub></td><td width="33.33%" align="center"><sub><b>Model Prediction</b></sub></td></tr>
+</table>
 
 **Result:** the policy combines three constraints - on the ice, not a player, and holding a microphone - to localize the correct person at **99.48% IoU**.
 
 > **Prompt:** Find the dog whose posture is different from the others.
 
-<p align="center">
-  <img src="assets/examples-v2/task1-dog.png" width="1100" alt="Grounded segmentation of the dog with a different posture">
-</p>
-<table width="100%"><tr><td width="33%" align="center"><sub><b>Original Image</b></sub></td><td width="34%" align="center"><sub><b>Ground Truth Mask</b></sub></td><td width="33%" align="center"><sub><b>Model Prediction</b></sub></td></tr></table>
+<table width="100%">
+  <tr><td colspan="3" align="center"><img src="assets/examples-v2/task1-dog.png" width="100%" alt="Grounded segmentation of the dog with a different posture"></td></tr>
+  <tr><td width="33.33%" align="center"><sub><b>Original Image</b></sub></td><td width="33.34%" align="center"><sub><b>Ground Truth Mask</b></sub></td><td width="33.33%" align="center"><sub><b>Model Prediction</b></sub></td></tr>
+</table>
 
 **Result:** the policy compares multiple dogs and selects the only sitting instance, producing a mask at **99.52% IoU**.
 
@@ -141,19 +134,19 @@ The Inspect policy receives the original image, target description, and candidat
 
 > **Prompt:** Starting from the bottom die and adding up the visible pips as you move upward, locate the die that is added when the total first exceeds 20. If two faces are visible, add both numbers.
 
-<p align="center">
-  <img src="assets/examples-v2/task2-accept-dice.png" width="1100" alt="Accepted high-quality candidate mask on the selected die">
-</p>
-<table width="100%"><tr><td width="33%" align="center"><sub><b>Original Image</b></sub></td><td width="34%" align="center"><sub><b>Ground Truth Mask</b></sub></td><td width="33%" align="center"><sub><b>Candidate Mask</b></sub></td></tr></table>
+<table width="100%">
+  <tr><td colspan="3" align="center"><img src="assets/examples-v2/task2-accept-dice.png" width="100%" alt="Accepted high-quality candidate mask on the selected die"></td></tr>
+  <tr><td width="34.60%" align="center"><sub><b>Original Image</b></sub></td><td width="34.41%" align="center"><sub><b>Ground Truth Mask</b></sub></td><td width="30.99%" align="center"><sub><b>Candidate Mask</b></sub></td></tr>
+</table>
 
 **Inspect action: `ACCEPT`.** The candidate completely covers the target die at **99.40% IoU**, so the loop avoids an unnecessary correction round.
 
 > **Prompt:** What kind of object can I use to climb onto the car roof in order to load items onto the roof rack?
 
-<p align="center">
-  <img src="assets/examples-v2/task2-refine-ladder.png" width="1100" alt="Rejected incomplete candidate mask on the vehicle ladder">
-</p>
-<table width="100%"><tr><td width="33%" align="center"><sub><b>Original Image</b></sub></td><td width="34%" align="center"><sub><b>Ground Truth Mask</b></sub></td><td width="33%" align="center"><sub><b>Candidate Mask</b></sub></td></tr></table>
+<table width="100%">
+  <tr><td colspan="3" align="center"><img src="assets/examples-v2/task2-refine-ladder.png" width="100%" alt="Rejected incomplete candidate mask on the vehicle ladder"></td></tr>
+  <tr><td width="35.62%" align="center"><sub><b>Original Image</b></sub></td><td width="35.67%" align="center"><sub><b>Ground Truth Mask</b></sub></td><td width="28.71%" align="center"><sub><b>Candidate Mask</b></sub></td></tr>
+</table>
 
 **Inspect action: `REFINE`.** The candidate misses the lower half of the ladder and contains local noise. At **52.25% IoU**, it is routed to the Correct stage.
 
@@ -163,65 +156,27 @@ The Correct policy turns a mask defect into a SAM-compatible action. `EXTRA` pro
 
 > **Prompt:** Locate the object that displays the venue's name in text and functions as a physical barrier separating the sidewalk from the outdoor seating.
 
-<p align="center">
-  <img src="assets/examples-v2/task3-extra-pub.png" width="1100" alt="Negative correction point for an extra region on the pub barrier mask">
-</p>
-<table width="100%"><tr><td width="33%" align="center"><sub><b>Original Image</b></sub></td><td width="34%" align="center"><sub><b>Ground Truth Mask</b></sub></td><td width="33%" align="center"><sub><b>Corrupted Mask + Correction Point</b></sub></td></tr></table>
+<table width="100%">
+  <tr><td colspan="3" align="center"><img src="assets/examples-v2/task3-extra-pub.png" width="100%" alt="Negative correction point for an extra region on the pub barrier mask"></td></tr>
+  <tr><td width="33.33%" align="center"><sub><b>Original Image</b></sub></td><td width="33.34%" align="center"><sub><b>Ground Truth Mask</b></sub></td><td width="33.33%" align="center"><sub><b>Corrupted Mask<br/>+ Correction Point</b></sub></td></tr>
+</table>
 
 **Correction: `EXTRA` + negative point.** The candidate spills onto the neighboring barrier. The policy places its point inside the extra region so SAM can remove it.
 
 > **Prompt:** In this performance protesting torture, identify the item worn to denounce the control of detainees through sensory and psychological means.
 
-<p align="center">
-  <img src="assets/examples-v2/task3-missing-hood.png" width="1100" alt="Positive correction point for a missing region on the hood mask">
-</p>
-<table width="100%"><tr><td width="33%" align="center"><sub><b>Original Image</b></sub></td><td width="34%" align="center"><sub><b>Ground Truth Mask</b></sub></td><td width="33%" align="center"><sub><b>Corrupted Mask + Correction Point</b></sub></td></tr></table>
+<table width="100%">
+  <tr><td colspan="3" align="center"><img src="assets/examples-v2/task3-missing-hood.png" width="100%" alt="Positive correction point for a missing region on the hood mask"></td></tr>
+  <tr><td width="33.33%" align="center"><sub><b>Original Image</b></sub></td><td width="33.34%" align="center"><sub><b>Ground Truth Mask</b></sub></td><td width="33.33%" align="center"><sub><b>Corrupted Mask<br/>+ Correction Point</b></sub></td></tr>
+</table>
 
 **Correction: `MISSING` + positive point.** The candidate omits the center of the hood. The policy places its point inside the missing region so SAM can recover it.
 
 ## System Architecture
 
-```mermaid
-flowchart TB
-    subgraph Data[Data Layer]
-        D1[Reasoning segmentation data]
-        D2[Task 2 quality data]
-        D3[Task 3 correction data]
-    end
-
-    subgraph Policy[Policy]
-        P1[Qwen3-VL]
-        P2[LoRA Adapter]
-        P3[vLLM Rollout]
-    end
-
-    subgraph Reward[Reward System]
-        R0[Task Router]
-        R1[SAM Spatial Reward]
-        R2[Continuous Quality Reward]
-        R3[Error Label and Region Hit]
-    end
-
-    subgraph Train[Training and Diagnostics]
-        T1[GRPO Advantage]
-        T2[FSDP Policy Update]
-        T3[Rollout Visualization]
-    end
-
-    D1 --> P1
-    D2 --> P1
-    D3 --> P1
-    P1 --> P2 --> P3
-    P3 --> R0
-    R0 --> R1
-    R0 --> R2
-    R0 --> R3
-    R1 --> T1
-    R2 --> T1
-    R3 --> T1
-    T1 --> T2
-    P3 --> T3
-```
+<p align="center">
+  <img src="assets/diagrams/system-architecture.svg" width="1100" alt="AgenticSeg-RL system architecture">
+</p>
 
 ### Task-Aware Reward Routing
 
