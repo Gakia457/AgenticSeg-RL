@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="790" viewBox="0 0 1200 790" role="img" aria-labelledby="title desc">
+  <title id="title">AgenticSeg-RL system architecture</title>
+  <desc id="desc">Three task datasets share a Qwen3-VL policy and LoRA adapter, use task-aware rewards, and feed GRPO learning and rollout diagnostics.</desc>
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="6" stdDeviation="9" flood-color="#29465B" flood-opacity="0.09"/>
+    </filter>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#8197A7"/>
+    </marker>
+    <linearGradient id="canvas" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F9FCFD"/>
+      <stop offset="1" stop-color="#F6F8FC"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="1" y="1" width="1198" height="788" rx="28" fill="url(#canvas)" stroke="#E4EDF1"/>
+  <text x="42" y="45" fill="#7890A2" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="13" font-weight="700" letter-spacing="2.4">TRAINING SYSTEM</text>
+  <text x="42" y="76" fill="#18364A" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="25" font-weight="700">Shared policy, task-specific learning signals</text>
+
+  <!-- connection lines behind cards -->
+  <g fill="none" stroke="#8197A7" stroke-width="1.8" marker-end="url(#arrow)">
+    <path d="M265 188 V220 H374 V252"/>
+    <path d="M600 188 V220 H374 V252"/>
+    <path d="M935 188 V220 H374 V252"/>
+    <path d="M490 310 H542"/>
+    <path d="M658 310 H710"/>
+    <path d="M826 364 V410 H600 V443"/>
+    <path d="M600 493 V514 H266 V542"/>
+    <path d="M600 493 V542"/>
+    <path d="M600 493 V514 H934 V542"/>
+    <path d="M266 610 V641 H392 V674"/>
+    <path d="M600 610 V641 H392 V674"/>
+    <path d="M934 610 V641 H392 V674"/>
+    <path d="M520 716 H568"/>
+    <path d="M826 364 C1030 390 1030 650 959 674" stroke-dasharray="6 7"/>
+  </g>
+
+  <!-- 01 data -->
+  <text x="42" y="123" fill="#3D7A6C" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="12" font-weight="750" letter-spacing="1.7">01  TASK DATA</text>
+  <g filter="url(#shadow)">
+    <rect x="150" y="133" width="230" height="55" rx="15" fill="#EFF9F6" stroke="#9BCDBF"/>
+    <rect x="485" y="133" width="230" height="55" rx="15" fill="#EFF9F6" stroke="#9BCDBF"/>
+    <rect x="820" y="133" width="230" height="55" rx="15" fill="#EFF9F6" stroke="#9BCDBF"/>
+  </g>
+  <circle cx="176" cy="160" r="13" fill="#D9F1EA"/>
+  <circle cx="511" cy="160" r="13" fill="#D9F1EA"/>
+  <circle cx="846" cy="160" r="13" fill="#D9F1EA"/>
+  <text x="176" y="165" text-anchor="middle" fill="#287461" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="11" font-weight="750">1</text>
+  <text x="511" y="165" text-anchor="middle" fill="#287461" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="11" font-weight="750">2</text>
+  <text x="846" y="165" text-anchor="middle" fill="#287461" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="11" font-weight="750">3</text>
+  <text x="198" y="165" fill="#28594E" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="13.5" font-weight="650">Reasoning segmentation</text>
+  <text x="533" y="165" fill="#28594E" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="13.5" font-weight="650">Mask quality</text>
+  <text x="868" y="165" fill="#28594E" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="13.5" font-weight="650">Error correction</text>
+
+  <!-- 02 shared policy -->
+  <g filter="url(#shadow)">
+    <rect x="182" y="238" width="836" height="140" rx="24" fill="#F7FBFF" stroke="#C8DEF1" stroke-width="1.5"/>
+  </g>
+  <text x="212" y="269" fill="#3979B5" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="12" font-weight="750" letter-spacing="1.7">02  SHARED POLICY</text>
+  <rect x="270" y="283" width="220" height="54" rx="15" fill="#EAF4FF" stroke="#8DBCE7"/>
+  <rect x="542" y="283" width="116" height="54" rx="27" fill="#F1EFFF" stroke="#AAA0E5"/>
+  <rect x="710" y="283" width="220" height="54" rx="15" fill="#EAF4FF" stroke="#8DBCE7"/>
+  <text x="380" y="316" text-anchor="middle" fill="#173F62" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="15" font-weight="700">Qwen3-VL</text>
+  <text x="600" y="316" text-anchor="middle" fill="#463E74" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="13.5" font-weight="700">LoRA</text>
+  <text x="820" y="308" text-anchor="middle" fill="#173F62" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="14" font-weight="700">vLLM rollouts</text>
+  <text x="820" y="326" text-anchor="middle" fill="#5F7E95" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="11.5">shared generation</text>
+
+  <!-- 03 router and rewards -->
+  <text x="42" y="445" fill="#A86831" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="12" font-weight="750" letter-spacing="1.7">03  TASK-AWARE REWARDS</text>
+  <g filter="url(#shadow)">
+    <rect x="536" y="443" width="128" height="50" rx="25" fill="#FFF7E5" stroke="#DAB863" stroke-width="1.5"/>
+  </g>
+  <text x="600" y="473" text-anchor="middle" fill="#6C531D" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="13.5" font-weight="700">Task router</text>
+  <g filter="url(#shadow)">
+    <rect x="142" y="542" width="248" height="68" rx="17" fill="#FFF3E8" stroke="#E6A974"/>
+    <rect x="476" y="542" width="248" height="68" rx="17" fill="#FFF3E8" stroke="#E6A974"/>
+    <rect x="810" y="542" width="248" height="68" rx="17" fill="#FFF3E8" stroke="#E6A974"/>
+  </g>
+  <text x="266" y="572" text-anchor="middle" fill="#6A4022" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="13.5" font-weight="700">SAM spatial reward</text>
+  <text x="266" y="592" text-anchor="middle" fill="#9A7456" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="11.5">Task 1 · target localization</text>
+  <text x="600" y="572" text-anchor="middle" fill="#6A4022" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="13.5" font-weight="700">Continuous quality</text>
+  <text x="600" y="592" text-anchor="middle" fill="#9A7456" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="11.5">Task 2 · mask assessment</text>
+  <text x="934" y="572" text-anchor="middle" fill="#6A4022" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="13.5" font-weight="700">Label + region hit</text>
+  <text x="934" y="592" text-anchor="middle" fill="#9A7456" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="11.5">Task 3 · correction action</text>
+
+  <!-- 04 learn and observe -->
+  <text x="42" y="685" fill="#665E9D" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="12" font-weight="750" letter-spacing="1.7">04  LEARN &amp; OBSERVE</text>
+  <g filter="url(#shadow)">
+    <rect x="264" y="674" width="256" height="84" rx="19" fill="#F1EFFF" stroke="#AAA0E5"/>
+    <rect x="568" y="674" width="256" height="84" rx="19" fill="#F1EFFF" stroke="#AAA0E5"/>
+    <rect x="872" y="674" width="174" height="84" rx="19" fill="#FFFFFF" stroke="#B8C9D4" stroke-dasharray="5 5"/>
+  </g>
+  <text x="392" y="710" text-anchor="middle" fill="#463E74" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="15" font-weight="700">GRPO advantage</text>
+  <text x="392" y="733" text-anchor="middle" fill="#756D9A" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="11.5">group-relative signal</text>
+  <text x="696" y="710" text-anchor="middle" fill="#463E74" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="15" font-weight="700">FSDP policy update</text>
+  <text x="696" y="733" text-anchor="middle" fill="#756D9A" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="11.5">distributed optimization</text>
+  <text x="959" y="710" text-anchor="middle" fill="#385569" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="13.5" font-weight="700">Rollout</text>
+  <text x="959" y="730" text-anchor="middle" fill="#708795" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="11.5">visualization</text>
+  <rect x="995" y="504" width="92" height="24" rx="12" fill="#EEF3F6"/>
+  <text x="1041" y="521" text-anchor="middle" fill="#637E8E" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="10.5" font-weight="700">DIAGNOSTICS</text>
+</svg>
